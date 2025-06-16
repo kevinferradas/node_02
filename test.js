@@ -3,6 +3,7 @@ const fs = require("node:fs")
 
 //Lectura
 
+
 let lectura = fs.readFileSync("test.json", "utf-8")
 let jsonLeido = JSON.parse(lectura)
 
@@ -34,7 +35,7 @@ const jsonPrueba = [
 ]
 
 // Escritura
-// fs.writeFileSync("test.json", JSON.stringify(jsonPrueba), "utf-8")
+ fs.writeFileSync("test.json", JSON.stringify(jsonPrueba), "utf-8")
 
 // console.log(lectura[0]);
 // console.log(jsonLeido);
