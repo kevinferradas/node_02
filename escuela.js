@@ -15,9 +15,7 @@ const fs = require ("node:fs");
 
 // El resultado (contenido del archivo) se guarda como string en la variable lectura.
 
-let lectura = fs.readFileSync("escuela.json", "utf-8")
-
-
+ let lectura = fs.readFileSync("escuela.json", "utf-8")
 
 
 
@@ -25,9 +23,9 @@ let lectura = fs.readFileSync("escuela.json", "utf-8")
 // console.log(typeof jsonLeido);
 // #####################################################################################
 
-/*1. MATRICULACION*/ 
+/*1. MATRICULACION
 
-/*La matriculación se realizará así:
+La matriculación se realizará así:
 node escuela.js nombre_alumno apellido_alumno edad asignatura
 
 Nota 1: No sabremos por adelantado cuáles son las asignaturas.
@@ -45,43 +43,179 @@ if (process.argv.length == 6) {
     let apellido = process.argv[3]
     let edad = process.argv[4]
     let asignatura = process.argv[5]
- 
+
+    let objeto_Alumno_Matriculado = 
+    {
+        "nombre":`${nombre}`,
+        "apellido":`${apellido}`,
+        "edad":`${edad}`,
+        "asignatura":`${asignatura}`
+    }
+
+    let array_Alumnos_Matriculados;
     
         if (lectura.trim() === ""){
-            var array_Alumnos_Matriculados = [{"nombre":`${nombre}`,"apellido":`${apellido}`,"edad":`${edad}`,"asignatura":`${asignatura}`}]
-            // console.log(array_Alumnos_Matriculados);
-            // Escritura
-
-            fs.writeFileSync("escuela.json", JSON.stringify(array_Alumnos_Matriculados), "utf-8")   // Guarda (escribe) un objeto JavaScript en un archivo JSON.
-
+            array_Alumnos_Matriculados = [objeto_Alumno_Matriculado]
+    
         } else {
-            let objeto_Alumno_Matriculado = {"nombre":`${nombre}`,"apellido":`${apellido}`,"edad":`${edad}`,"asignatura":`${asignatura}`}
+
+            // Convertimos el texto JSON leído desde el archivo (lectura) 
+            // en un objeto o arreglo de JavaScript, usando JSON.parse().
+            array_Alumnos_Matriculados = JSON.parse(lectura)
             array_Alumnos_Matriculados.push(objeto_Alumno_Matriculado)
-            fs.writeFileSync("escuela.json", JSON.stringify(array_Alumnos_Matriculados), "utf-8")
         }
 
+        // Escritura
+        // Guarda (escribe) un objeto JavaScript en un archivo JSON.
+        fs.writeFileSync("escuela.json", JSON.stringify(array_Alumnos_Matriculados,null,2), "utf-8")   
 
+} 
+
+/*2. BORRAR ALUMNO
+
+Podremos borrar un alumno de la lista así:
+node escuela.js nombre_alumno apellido_alumno -1
+Si el alumno no está en la lista debe aparecer este mensaje:
+"No tenemos matriculado a ese alumno"
+
+*/ 
+
+else if(process.argv.length == 5 && parseInt(process.argv[4])== -1) {
+
+    let nombre = process.argv[2].toLocaleLowerCase()
+    let apellido = process.argv[3].toLocaleLowerCase()
+    array_Alumnos_Matriculados = JSON.parse(lectura)
+    let longitudOriginal = array_Alumnos_Matriculados.length
+
+
+    array_Alumnos_Matriculados = array_Alumnos_Matriculados.filter(
+    alumnos => alumnos.nombre.toLocaleLowerCase() != nombre &&  alumnos.apellido.toLocaleLowerCase() != apellido) 
+
+    fs.writeFileSync("escuela.json", JSON.stringify(array_Alumnos_Matriculados,null,2), "utf-8")  
     
-} else if(process.argv.length == 5) {
-    // process.argv[2] -> asignatura
-    //Mostraremos los alumnos matriculados en la asignatura
-} else if(process.argv.length == 4) {
-    // process.argv[2] -> nombre
-    // process.argv[3] -> apellido
-    // Mostraremos las asignaturas de las que está matriculado
-} else if(process.argv.length == 3) {
-    // process.argv[2] -> nombre
-    // process.argv[3] -> apellido
-    // Borraremos al alumno con ese nombre y apellido
-} else if(process.argv.length == 2) {
-    // process.argv[2] -> nombre
-    // process.argv[3] -> apellido
-    // process.argv[4] -> edad
-    // process.argv[5] -> asignatura
-    // Matricular al alumno con esos datos 
-    }else {
-        console.log("Hola");
+    if (array_Alumnos_Matriculados.length == longitudOriginal){
+        console.log(`No tenemos matriculado al alumno ${nombre} ${apellido}.`);
     }
+
+} 
+
+/* 3. LISTAMOS ASIGNATURAS POR ALUMNO
+
+Si escribimos:
+node escuela.js nombre_alumno apellido_alumno
+Deben aparecer las asignaturas en las que está matriculado así:
+
+El alumno nombre_alumno apellido_alumno está matriculado de:
+    -- X 
+    -- Y
+    
+*/
+
+else if (process.argv.length == 4){
+
+    let nombre = process.argv[2]
+    let apellido = process.argv[3]
+    array_Alumnos_Matriculados = JSON.parse(lectura)
+
+    array_alumno = array_Alumnos_Matriculados.filter(
+    alumnos => alumnos.nombre.toLocaleLowerCase() == nombre.toLocaleLowerCase() && 
+     alumnos.apellido.toLocaleLowerCase() == apellido.toLocaleLowerCase()) 
+
+    if (array_alumno.length == 0) {
+        console.log(`\nNo tenemos matriculado al alumno ${nombre} ${apellido}.`); }
+    else{
+
+        console.log(`\nEl(La) alumno(a) ${nombre} ${apellido} está matriculado en :\n`);
+
+        for (let i=0 ; i<array_alumno.length ; i++){
+            let asignatura = array_alumno[i].asignatura
+            console.log(`\t-- ${asignatura}`);
+        }
+        
+    }
+    console.log('\n');
+}
+
+/*  4. LISTAMOS ALUMNOS POR ASIGNATURA
+
+Si escribimos:
+node escuela.js asignatura (cualquiera que sea)
+Aparecerán los datos de los alumnos matriculados en ella, así:
+
+Alumnos matriculados en X (X es la asignatura)
+=========================
+nombre_1 apellido_1 edad_1
+nombre_2 apellido_2 edad_2
+...
+nombre_n apellido_n edad_n
+--------------------------------
+Total: n alumnos matriculados
+*/
+
+ else if(process.argv.length == 3) {
+
+    let asignatura = process.argv[2]
+    array_Alumnos_Matriculados = JSON.parse(lectura)
+
+    array_asignatura = array_Alumnos_Matriculados.filter(
+    alumnos => alumnos.asignatura.toLocaleLowerCase() == asignatura.toLocaleLowerCase())
+    let cabecera1;
+
+    if (array_asignatura.length == 0) {
+        console.log(`\nNo tenemos ningún alumno matriculado en ${asignatura}`); }
+    else{
+
+        cabecera1 = `Alumnos matriculados en ${asignatura}\n`
+        cabecera2 = "=".repeat(cabecera1.length - 1)
+        console.log(`\n${cabecera1}${cabecera2}\n`);
+       
+
+        for (let i=0 ; i<array_asignatura.length ; i++){
+
+            let nombre_alumno = array_asignatura[i].nombre
+            let apellido_alumno = array_asignatura[i].apellido
+            let edad_alumno = array_asignatura[i].edad
+
+            console.log(`\t-- ${nombre_alumno}  ${apellido_alumno}  ${edad_alumno}\n`);
+        }
+        
+    }
+
+    let pie = "-".repeat(cabecera1.length - 1)
+    console.log(`${pie}\n`);
+
+    console.log(`Total: ${array_asignatura.length} alumnos matriculados.`);
+
+    console.log('\n');
+} 
+
+/*  5. MOSTRAMOS ALUMNOS
+
+Si escribimos:
+node escuela.js
+Apareceran los datos de todos los alumnos, así:
+
+Alumnos matriculados
+====================
+nombre_1 apellido_1 edad_1 asignatura_x
+nombre_2 apellido_2 edad_2 asignatura_y
+...
+nombre_n apellido_n edad_n asignatura_z
+---------------------------------------
+Total: n alumnos matriculados
+
+Ordenados por apellido, nombre, asignatura de forma descendente
+(de la A a Z)
+*/
+
+else if(process.argv.length == 2) {
+
+
+ } 
+
+else {
+        console.log("Hola");
+   }
 
 
 

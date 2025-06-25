@@ -1,1 +1,44 @@
-[{"nombre":"Kevin","apellido":"Ferradas","edad":"29","asignatura":"Física"}]
+[
+  {
+    "nombre": "Ana-María",
+    "apellido": "Sandoval",
+    "edad": "24",
+    "asignatura": "Biología"
+  },
+  {
+    "nombre": "Kevin",
+    "apellido": "Ferradas",
+    "edad": "29",
+    "asignatura": "Física"
+  },
+  {
+    "nombre": "Kevin",
+    "apellido": "Ferradas",
+    "edad": "29",
+    "asignatura": "Matemática"
+  },
+  {
+    "nombre": "Kevin",
+    "apellido": "Ferradas",
+    "edad": "29",
+    "asignatura": "Biología"
+  },
+  {
+    "nombre": "Renato",
+    "apellido": "González",
+    "edad": "30",
+    "asignatura": "Matemática"
+  },
+  {
+    "nombre": "Ana-María",
+    "apellido": "Sandoval",
+    "edad": "24",
+    "asignatura": "Matemática"
+  },
+  {
+    "nombre": "Ana-María",
+    "apellido": "Sandoval",
+    "edad": "24",
+    "asignatura": "Física"
+  }
+]
