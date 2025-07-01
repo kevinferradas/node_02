@@ -1,9 +1,21 @@
 [
   {
+    "nombre": "Luis",
+    "apellido": "Miranda",
+    "edad": "55",
+    "asignatura": "Electrónica"
+  },
+  {
     "nombre": "Ana-María",
     "apellido": "Sandoval",
     "edad": "24",
-    "asignatura": "Biología"
+    "asignatura": "Matemática"
+  },
+  {
+    "nombre": "Ana-María",
+    "apellido": "Sandoval",
+    "edad": "24",
+    "asignatura": "Física"
   },
   {
     "nombre": "Kevin",
@@ -28,17 +40,5 @@
     "apellido": "González",
     "edad": "30",
     "asignatura": "Matemática"
-  },
-  {
-    "nombre": "Ana-María",
-    "apellido": "Sandoval",
-    "edad": "24",
-    "asignatura": "Matemática"
-  },
-  {
-    "nombre": "Ana-María",
-    "apellido": "Sandoval",
-    "edad": "24",
-    "asignatura": "Física"
   }
 ]

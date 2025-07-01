@@ -9,7 +9,7 @@ const fs = require ("node:fs");
 
 // fs.readFileSync(...): Lee un archivo de forma sincrónica (bloqueante) usando el módulo fs (file system).
 
-// "escueka.json": Es el nombre del archivo que estamos leyendo.
+// "escuela.json": Es el nombre del archivo que estamos leyendo.
 
 // "utf-8": Especifica que el contenido se lee como texto (no como binario).
 
@@ -17,10 +17,9 @@ const fs = require ("node:fs");
 
  let lectura = fs.readFileSync("escuela.json", "utf-8")
 
+// Importarmos la función capitalize, del fichero funciones.js para capitalizar nombre, apellidos y asignaturas.
+const {capitalize} = require('./funciones')
 
-
-// console.log(jsonLeido);
-// console.log(typeof jsonLeido);
 // #####################################################################################
 
 /*1. MATRICULACION
@@ -39,10 +38,10 @@ donde quedarán registrados en ese formato, obviamente.*/
 
 if (process.argv.length == 6) {
 
-    let nombre = process.argv[2]
-    let apellido = process.argv[3]
+    let nombre = capitalize(process.argv[2])
+    let apellido = capitalize(process.argv[3])
     let edad = process.argv[4]
-    let asignatura = process.argv[5]
+    let asignatura = capitalize(process.argv[5])
 
     let objeto_Alumno_Matriculado = 
     {
@@ -82,14 +81,14 @@ Si el alumno no está en la lista debe aparecer este mensaje:
 
 else if(process.argv.length == 5 && parseInt(process.argv[4])== -1) {
 
-    let nombre = process.argv[2].toLocaleLowerCase()
-    let apellido = process.argv[3].toLocaleLowerCase()
+    let nombre = capitalize(process.argv[2])
+    let apellido = capitalize(process.argv[3])
     array_Alumnos_Matriculados = JSON.parse(lectura)
     let longitudOriginal = array_Alumnos_Matriculados.length
 
 
     array_Alumnos_Matriculados = array_Alumnos_Matriculados.filter(
-    alumnos => alumnos.nombre.toLocaleLowerCase() != nombre &&  alumnos.apellido.toLocaleLowerCase() != apellido) 
+    alumnos => alumnos.nombre != nombre &&  alumnos.apellido != apellido) 
 
     fs.writeFileSync("escuela.json", JSON.stringify(array_Alumnos_Matriculados,null,2), "utf-8")  
     
@@ -113,13 +112,13 @@ El alumno nombre_alumno apellido_alumno está matriculado de:
 
 else if (process.argv.length == 4){
 
-    let nombre = process.argv[2]
-    let apellido = process.argv[3]
+    let nombre = capitalize(process.argv[2])
+    let apellido = capitalize(process.argv[3])
     array_Alumnos_Matriculados = JSON.parse(lectura)
 
     array_alumno = array_Alumnos_Matriculados.filter(
-    alumnos => alumnos.nombre.toLocaleLowerCase() == nombre.toLocaleLowerCase() && 
-     alumnos.apellido.toLocaleLowerCase() == apellido.toLocaleLowerCase()) 
+    alumnos => alumnos.nombre == nombre && 
+     alumnos.apellido == apellido) 
 
     if (array_alumno.length == 0) {
         console.log(`\nNo tenemos matriculado al alumno ${nombre} ${apellido}.`); }
@@ -154,11 +153,11 @@ Total: n alumnos matriculados
 
  else if(process.argv.length == 3) {
 
-    let asignatura = process.argv[2]
+    let asignatura = capitalize(process.argv[2])
     array_Alumnos_Matriculados = JSON.parse(lectura)
 
     array_asignatura = array_Alumnos_Matriculados.filter(
-    alumnos => alumnos.asignatura.toLocaleLowerCase() == asignatura.toLocaleLowerCase())
+    alumnos => alumnos.asignatura == asignatura)
     let cabecera1;
 
     if (array_asignatura.length == 0) {
@@ -166,7 +165,7 @@ Total: n alumnos matriculados
     else{
 
         cabecera1 = `Alumnos matriculados en ${asignatura}\n`
-        cabecera2 = "=".repeat(cabecera1.length - 1)
+        let cabecera2 = "=".repeat(cabecera1.length - 1)
         console.log(`\n${cabecera1}${cabecera2}\n`);
        
 
@@ -210,11 +209,63 @@ Ordenados por apellido, nombre, asignatura de forma descendente
 
 else if(process.argv.length == 2) {
 
+    array_Alumnos_Matriculados = JSON.parse(lectura)
 
- } 
+    array_Alumnos_Matriculados.sort((a, b) => {
+    // b.apellido.localeCompare(a.apellido) devuelve -1 (b<a) , 0 (b=a), 1 (b>a)
+    const ap = b.apellido.localeCompare(a.apellido);
+    const nom = b.nombre.localeCompare(a.nombre);
+    const asig = b.asignatura.localeCompare(a.asignatura)
+    if (ap !== 0) return ap;
+    else if (nom !== 0) return nom;
+    else return asig;
+});    
 
+        let cabecera1 = `Alumnos matriculados\n`
+        let cabecera2 = "=".repeat(cabecera1.length - 1)
+        console.log(`\n${cabecera1}${cabecera2}\n`);
+
+        // Lista auxiliar para contabilizar la cantidad de alumnos
+        let array_numero_alumnos=[];
+
+        for (let i=0 ; i<array_Alumnos_Matriculados.length ; i++){
+    
+          
+            let nombre_alumno = array_Alumnos_Matriculados[i].nombre
+            let apellido_alumno = array_Alumnos_Matriculados[i].apellido
+            let edad_alumno = array_Alumnos_Matriculados[i].edad
+            let asignatura_alumno = array_Alumnos_Matriculados[i].asignatura
+
+            let nombre_apellido = nombre_alumno + apellido_alumno
+            if(!array_numero_alumnos.includes(nombre_apellido)){
+                array_numero_alumnos.push(nombre_apellido)}
+                
+           
+
+            console.log(`\t-- ${apellido_alumno}  ${nombre_alumno}  ${edad_alumno}  ${asignatura_alumno}\n`);
+        }
+        
+        
+        
+
+
+
+    let pie = "-".repeat(cabecera1.length - 1)
+    console.log(`${pie}\n`);
+
+
+
+    console.log(`Total: ${array_numero_alumnos.length} alumnos matriculados.`);
+
+    console.log('\n');
+
+ }
+/* 
+Cualquier otra forma de acceder a los datos debe de considerarse un error
+ y debe aparecer el correspondiente mensaje
+*/
 else {
-        console.log("Hola");
+        console.log("No es una forma válida de acceder a los datos de escuela.");
    }
 
 
