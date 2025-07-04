@@ -1,5 +1,7 @@
 
 
+const fs = require ("node:fs");
+let lectura = fs.readFileSync("escuela.json", "utf-8")
 
 function capitalize(palabra) {
     let longitud_palabra = palabra.length
@@ -23,4 +25,24 @@ function capitalize(palabra) {
 }
 
 
-module.exports ={capitalize}
+function ordenar_desc(array) {
+
+    array.sort((a, b) => {
+    // b.apellido.localeCompare(a.apellido) devuelve -1 (b<a) , 0 (b=a), 1 (b>a)
+    const ap = b.apellido.localeCompare(a.apellido);
+    const nom = b.nombre.localeCompare(a.nombre);
+    const asig = b.asignatura.localeCompare(a.asignatura)
+    if (ap !== 0) return ap;
+    else if (nom !== 0) return nom;
+    else return asig;
+    });
+
+}
+
+array_Alumnos_Matriculados = JSON.parse(lectura)
+ordenar_desc(array_Alumnos_Matriculados)
+// array_Alumnos_Matriculados = JSON.parse(lectura)
+console.log(array_Alumnos_Matriculados);
+
+module.exports ={capitalize, ordenar_desc}
+
